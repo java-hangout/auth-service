@@ -1,3 +1,4 @@
+/*
 package com.kt.ts.authservice.util;
 
 import io.jsonwebtoken.Jwts;
@@ -27,3 +28,4 @@ public class JwtUtilTest {
         System.out.println("Generated JWT: " + jwt);
     }
 }
+*/

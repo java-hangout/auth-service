@@ -1,7 +1,7 @@
 package com.kt.ts.authservice.config;
 
-import com.kt.ts.authservice.util.JwtAuthenticationFilter;
-import com.kt.ts.authservice.util.JwtUtil;
+import com.kt.ts.commonservice.util.JwtAuthenticationFilter;
+import com.kt.ts.commonservice.util.JwtUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -41,7 +41,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())  // Disable CSRF explicitly in Spring Security 6.x
                 .authorizeRequests(authz -> authz
-                        .requestMatchers("/auth/**").permitAll() // Allow access to authentication routes
+                        .requestMatchers("/auth/**").permitAll()  // Allow access to authentication routes
                         .anyRequest().authenticated() // All other requests must be authenticated
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);

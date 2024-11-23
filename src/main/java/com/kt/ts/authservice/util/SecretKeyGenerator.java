@@ -1,3 +1,4 @@
+/*
 package com.kt.ts.authservice.util;
 
 import javax.crypto.KeyGenerator;
@@ -25,3 +26,4 @@ public class SecretKeyGenerator {
         }
     }
 }
+*/

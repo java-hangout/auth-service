@@ -1,14 +1,18 @@
+/*
 package com.kt.ts.authservice.util;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtUtil {
@@ -22,16 +26,68 @@ public class JwtUtil {
     private long expirationTime = 1000 * 60 * 60; // 1 hour in milliseconds
 
     // Generate a JWT token with the given username
-    public String generateToken(String username) {
+    public String generateToken(String username, List<SimpleGrantedAuthority> authorities) {
         System.out.println("generateToken --->>> " + username);
 //        System.out.println("SECRET_KEY --->>> " + SECRET_KEY);
         System.out.println("secretKey --->>> " + secretKey);
+        Claims claims = Jwts.claims().setSubject(username);
+        claims.put("roles", authorities.stream().map(SimpleGrantedAuthority::getAuthority).collect(Collectors.toList()));
         return Jwts.builder()
-                .setSubject(username)
+                .setClaims(claims)
+//                .setSubject(username)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(secretKey)  // Use the generated secure key to sign the token
                 .compact();
+    }
+
+
+
+    // Extract the username (subject) from the JWT token
+    public String extractUsername(String token) {
+        return extractClaims(token).getSubject(); // The subject is typically the username
+    }
+
+    */
+/*public String[] extractRoles(String token) {
+        Claims claims = extractClaims(token);
+        List<String> roles = (List<String>) claims.get("roles");
+        return roles.toArray(new String[0]);
+    }*//*
+
+    public List<SimpleGrantedAuthority> extractRoles(String token) {
+        Claims claims = extractClaims(token);
+        List<String> roles = (List<String>) claims.get("roles");
+        return roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+    }
+    */
+/*//*
+/ Check if the token is expired
+    public boolean isTokenExpired(String token) {
+        return extractClaims(token).getExpiration().before(new Date());  // Compare token expiration with current time
+    }*//*
+
+
+    */
+/*//*
+/ Validate the JWT token by comparing username and expiration status
+    public boolean validateToken(String token, String username) {
+        return (username.equals(extractUsername(token)) && !isTokenExpired(token));  // Ensure the username matches and token isn't expired
+    }*//*
+
+    public List<SimpleGrantedAuthority> getAuthoritiesFromRoles(String[] roles) {
+        return Arrays.stream(roles)
+                .map(role -> new SimpleGrantedAuthority(role))
+                .collect(Collectors.toList());
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     // Extract claims (payload) from the JWT token
@@ -42,19 +98,5 @@ public class JwtUtil {
                 .parseClaimsJws(token)
                 .getBody();  // Extract and return claims from the JWT
     }
-
-    // Extract the username (subject) from the JWT token
-    public String extractUsername(String token) {
-        return extractClaims(token).getSubject(); // The subject is typically the username
-    }
-
-    // Check if the token is expired
-    public boolean isTokenExpired(String token) {
-        return extractClaims(token).getExpiration().before(new Date());  // Compare token expiration with current time
-    }
-
-    // Validate the JWT token by comparing username and expiration status
-    public boolean validateToken(String token, String username) {
-        return (username.equals(extractUsername(token)) && !isTokenExpired(token));  // Ensure the username matches and token isn't expired
-    }
 }
+*/
