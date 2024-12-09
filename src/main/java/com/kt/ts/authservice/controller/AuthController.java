@@ -26,6 +26,21 @@ public class AuthController {
         List<SimpleGrantedAuthority>  list= Collections.singletonList(new SimpleGrantedAuthority(request.getRole()));
         return authService.authenticateUser(request,list);
     }
+
+    // Check whether JWT Token  is expired
+    @PostMapping("/isTokenExpired")
+    public boolean isTokenExpired(@RequestHeader("Authorization") String oldToken) {
+        return authService.isTokenExpired(oldToken);
+    }
+
+    // Refresh JWT Token (you can extend this logic to refresh tokens)
+    @PostMapping("/refresh")
+    public AuthResponse refresh(@RequestHeader("Authorization") String oldToken) {
+        return authService.refreshToken(oldToken);
+    }
+
+
+
     @GetMapping("/prelogin")
     public String login() {
         return "Auth service is update and running ....";
