@@ -1,7 +1,5 @@
-/*
-package com.kt.ts.authservice.util;
+package com.jh.tds.as.util;
 
-import com.kt.ts.cs.util.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,11 +7,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -26,42 +22,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        */
-/*String token = request.getHeader("Authorization");
-        System.out.println("token --->>> " + token);
-        if (token != null && token.startsWith("Bearer ")) {
-            System.out.println("token --->>> 222 " + token);
-//            token = token.substring(7); // Remove "Bearer " prefix
-            token = token.split(" ")[1].trim();*//*
+
+        String path = request.getRequestURI();
+        System.out.println("Processing request for path: " + path);
+
+        if (shouldNotFilter(request)) {
+            System.out.println("Skipping filter for path: " + path);
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         String token = extractToken(request);
         if (token != null && jwtUtil.validateToken(token)) {
-                String username = jwtUtil.extractUsername(token);
+            String username = jwtUtil.extractUsername(token);
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 var authentication = new UsernamePasswordAuthenticationToken(username, null, jwtUtil.extractRoles(token));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
-            */
-/*String[] roles = jwtUtil.extractRoles(token);  // Extract roles from the token
 
-//            if (username != null && jwtUtil.validateToken(token, username)) {
-//            if (token != null && jwtUtil.validateToken(token)) {
-                // Create authentication token and set it in SecurityContext
-                *//*
-*/
-/*UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        username, null, new ArrayList<>()
-                );*//*
-*/
-/*
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        username, null, jwtUtil.getAuthoritiesFromRoles(roles)
-                );
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authentication);*//*
-
-            }
-//        }
+        }
 
         filterChain.doFilter(request, response);  // Proceed to the next filter in the chain
     }
@@ -74,5 +53,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         return null;
     }
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        // Exclude /api/auth/** from JWT validation
+        return path.startsWith("/api/auth/");
+    }
 }
-*/

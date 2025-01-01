@@ -1,4 +1,4 @@
-package com.kt.ts.authservice.model;
+package com.jh.tds.as.model;
 
 /**
  * @author Veeresh N

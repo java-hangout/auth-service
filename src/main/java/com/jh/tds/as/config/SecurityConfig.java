@@ -1,13 +1,15 @@
-package com.kt.ts.authservice.config;
+package com.jh.tds.as.config;
 
-import com.kt.ts.commonservice.util.JwtAuthenticationFilter;
-import com.kt.ts.commonservice.util.JwtUtil;
+
+import com.jh.tds.as.util.JwtAuthenticationFilter;
+import com.jh.tds.as.util.JwtUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -32,16 +34,18 @@ public class SecurityConfig {
     // AuthenticationManager bean for authentication
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
+        System.out.println("inside authenticationManager");
         return http.getSharedObject(AuthenticationManagerBuilder.class).build();
     }
 
     // HTTP security configuration to secure endpoints
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        System.out.println("Inside securityFilterChain-->> "+http);
         http
-                .csrf(csrf -> csrf.disable())  // Disable CSRF explicitly in Spring Security 6.x
+                .csrf(AbstractHttpConfigurer::disable)  // Disable CSRF explicitly in Spring Security 6.x
                 .authorizeRequests(authz -> authz
-                        .requestMatchers("/auth/**").permitAll()  // Allow access to authentication routes
+                        .requestMatchers("/api/auth/**").permitAll()  // Allow access to authentication routes
                         .anyRequest().authenticated() // All other requests must be authenticated
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);

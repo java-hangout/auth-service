@@ -1,5 +1,5 @@
 // AuthRequest.java
-package com.kt.ts.authservice.model;
+package com.jh.tds.as.model;
 
 public class AuthRequest {
     private String username;

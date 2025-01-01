@@ -1,4 +1,4 @@
-package com.kt.ts.authservice;
+package com.jh.tds.as;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

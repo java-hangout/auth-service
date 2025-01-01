@@ -1,0 +1,184 @@
+openapi: 3.0.1
+info:
+  title: Authentication API
+  description: API for handling user authentication, token generation, validation, and logout functionality.
+  version: 1.0.0
+tags:
+  - name: "Authentication"
+    description: "Endpoints for handling user authentication, login, logout, and token management."
+
+paths:
+  /api/auth/login:
+    post:
+      tags:
+        - "Authentication"
+      summary: "Login to the system"
+      description: "Authenticates a user based on the provided credentials and returns a JWT token."
+      requestBody:
+        description: "User credentials for login"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: "user1"
+                password:
+                  type: string
+                  example: "password123"
+                role:
+                  type: string
+                  example: "admin"
+      responses:
+        200:
+          description: "Login successful, returns JWT token"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        400:
+          description: "Invalid credentials"
+        500:
+          description: "Internal server error"
+
+  /api/auth/logout:
+    post:
+      tags:
+        - "Authentication"
+      summary: "Logout from the system"
+      description: "Logs the user out by clearing the authentication context."
+      responses:
+        200:
+          description: "Logout successful"
+          content:
+            application/json:
+              schema:
+                type: string
+                example: "Logged out successfully"
+        500:
+          description: "Error during logout"
+
+  /api/auth/isTokenExpired:
+    post:
+      tags:
+        - "Authentication"
+      summary: "Check if the token is expired"
+      description: "Validates whether the provided token is expired."
+      requestBody:
+        description: "Token to be checked"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Authorization:
+                  type: string
+                  example: "Bearer some-token-value"
+      responses:
+        200:
+          description: "Token expiration status"
+          content:
+            application/json:
+              schema:
+                type: boolean
+                example: true
+        400:
+          description: "Invalid token format"
+        500:
+          description: "Error in token validation"
+
+  /api/auth/refresh:
+    post:
+      tags:
+        - "Authentication"
+      summary: "Refresh an expired token"
+      description: "Refreshes an expired token by using the provided old token."
+      requestBody:
+        description: "Old token to be refreshed"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Authorization:
+                  type: string
+                  example: "Bearer old-token-value"
+      responses:
+        200:
+          description: "Successfully refreshed token"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        400:
+          description: "Invalid or expired token"
+        500:
+          description: "Error refreshing the token"
+
+  /api/auth/verify:
+    post:
+      tags:
+        - "Authentication"
+      summary: "Verify a token's validity"
+      description: "Verifies whether the provided token is valid."
+      requestBody:
+        description: "Token to be verified"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Authorization:
+                  type: string
+                  example: "Bearer token-value"
+      responses:
+        200:
+          description: "Token is valid"
+          content:
+            application/json:
+              schema:
+                type: boolean
+                example: true
+        400:
+          description: "Invalid token format"
+        401:
+          description: "Unauthorized, invalid token"
+        500:
+          description: "Error during token verification"
+
+components:
+  schemas:
+    AuthRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          example: "user1"
+        password:
+          type: string
+          example: "password123"
+        role:
+          type: string
+          example: "admin"
+
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyMSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTYyMTI4Nzg5OX0.cSntx-mopdS0fPscgD5mu8U71Kl6z7qmnUdqgj4RlQ0"
+
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Error message"
+        status:
+          type: integer
+          example: 500
