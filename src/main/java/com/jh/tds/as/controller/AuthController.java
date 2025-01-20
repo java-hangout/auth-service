@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000,http://localhost:3001,http://172.19.10.137:3000") // Allow only your frontend URL
 @RequestMapping("/api/auth")
 public class AuthController {
 
