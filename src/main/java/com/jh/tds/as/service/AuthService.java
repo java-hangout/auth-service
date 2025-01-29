@@ -9,6 +9,8 @@ import com.jh.tds.as.repository.UserRepository;
 import com.jh.tds.as.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,8 +30,10 @@ public class AuthService {
     public AuthResponse authenticateUser(AuthRequest request, List<SimpleGrantedAuthority> roles) {
         System.out.println("Inside authenticateUser, roles-->> " + roles);
         User details = getUserDetailsByUserName(request.getUsername());
-        if (details.getUserName().equals(request.getUsername()) && details.getPassword().equals(request.getPassword())) {
-            System.out.println("Inside authenticateUser, generic userDetails-->> " + request.getUsername());
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+//        if (details.getUserName().equals(request.getUsername()) && details.getPassword().equals(request.getPassword())) {
+        if (details.getUserName().equals(request.getUsername()) && passwordEncoder.matches(request.getPassword(), details.getPassword())) {
+        System.out.println("Inside authenticateUser, generic userDetails-->> " + request.getUsername());
             return getAuthResponse(request.getUsername(), roles);
         }
         throw new InvalidCredentialsException("Invalid credentials");
